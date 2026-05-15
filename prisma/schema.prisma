@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String       @id @default(cuid())
+  githubId     Int          @unique
+  username     String
+  email        String?
+  avatarUrl    String?
+  accessToken  String
+  plan         Plan         @default(FREE)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  repositories Repository[]
+  reviews      Review[]
+}
+
+model Repository {
+  id            String   @id @default(cuid())
+  githubId      Int      @unique
+  name          String
+  fullName      String
+  owner         String
+  description   String?
+  language      String?
+  isPrivate     Boolean  @default(false)
+  defaultBranch String   @default("main")
+  webhookId     Int?
+  webhookActive Boolean  @default(false)
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviews       Review[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Review {
+  id               String       @id @default(cuid())
+  prNumber         Int
+  prTitle          String
+  prUrl            String
+  branch           String?
+  status           ReviewStatus @default(PENDING)
+  overallScore     Int?
+  securityScore    Int?
+  qualityScore     Int?
+  performanceScore Int?
+  summary          String?      @db.Text
+  positiveHighlights String[]
+  repositoryId     String
+  repository       Repository   @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User         @relation(fields: [userId], references: [id])
+  issues           Issue[]
+  startedAt        DateTime?
+  completedAt      DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([repositoryId])
+  @@index([userId])
+}
+
+model Issue {
+  id          String    @id @default(cuid())
+  type        IssueType
+  severity    Severity
+  title       String
+  description String    @db.Text
+  file        String
+  line        Int
+  suggestion  String?   @db.Text
+  codeSnippet String?   @db.Text
+  reviewId    String
+  review      Review    @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@index([reviewId])
+}
+
+enum Plan {
+  FREE
+  PRO
+  TEAM
+}
+
+enum ReviewStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+enum IssueType {
+  SECURITY
+  QUALITY
+  PERFORMANCE
+  BEST_PRACTICE
+}
+
+enum Severity {
+  CRITICAL
+  WARNING
+  INFO
+}
