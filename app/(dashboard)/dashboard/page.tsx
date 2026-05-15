@@ -29,7 +29,7 @@ export default async function DashboardPage() {
     }))
     .reverse();
 
-  const activityEvents = reviews.slice(0, 5).map((r) => ({
+  const activityEvents = reviews.slice(0, 5).map((r: Review) => ({
     id: r.id,
     type: (r.status === "COMPLETED"
       ? r.overallScore && r.overallScore >= 70
