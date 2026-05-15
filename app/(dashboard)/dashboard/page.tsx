@@ -56,7 +56,7 @@ export default async function DashboardPage() {
     },
     {
       label: "Clean reviews",
-      value: reviews.filter((r) => r._count.issues === 0).length,
+      value: reviews.filter((r: Review) => r._count.issues === 0).length,
       track: "bg-accent-emerald/20",
       bar: "bg-accent-emerald",
     },
