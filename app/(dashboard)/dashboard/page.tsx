@@ -101,12 +101,12 @@ export default async function DashboardPage() {
             </CardHeader>
             {reviews.length > 0 ? (
               <div className="space-y-1">
-                {reviews.map((review) => {
+                {reviews.map((review: Review) => {
                   const criticalCount = review.issues.filter(
-                    (i) => i.severity === "CRITICAL"
+                    (i: Review["issues"][number]) => i.severity === "CRITICAL"
                   ).length;
                   const warningCount = review.issues.filter(
-                    (i) => i.severity === "WARNING"
+                    (i: Review["issues"][number]) => i.severity === "WARNING"
                   ).length;
 
                   return (
