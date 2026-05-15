@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { FileCode } from "@phosphor-icons/react/dist/ssr";
 import { getCurrentUser, getDashboardStats, getUserReviews } from "@/lib/dal";
+
+type Review = Awaited<ReturnType<typeof getUserReviews>>[number];
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { ScoreChart } from "@/components/dashboard/score-chart";
 import { ActivityFeed } from "@/components/dashboard/activity-feed";
@@ -17,8 +19,8 @@ export default async function DashboardPage() {
   ]);
 
   const chartData = reviews
-    .filter((r) => r.overallScore !== null)
-    .map((r) => ({
+    .filter((r: Review) => r.overallScore !== null)
+    .map((r: Review) => ({
       date: new Date(r.createdAt).toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
